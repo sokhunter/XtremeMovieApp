@@ -10,5 +10,5 @@ class DataResponse (
     @SerializedName("total_pages")
     val total_pages: Int?,
     @SerializedName("results")
-    val results: List<Movie>
+    val results: ArrayList<Movie>
 )

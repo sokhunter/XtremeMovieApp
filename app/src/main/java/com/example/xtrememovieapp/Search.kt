@@ -3,13 +3,17 @@ package com.example.xtrememovieapp
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_search.*
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 
-class Search : AppCompatActivity() {
-
+class Search : AppCompatActivity(), OnItemClickListener {
+    override fun OnItemClicked(movie: Movie) {
+        AppDatabase.getInstance(this).getDao().insertMovie(movie)
+        Toast.makeText(applicationContext,"Se agregó " + movie.title + " a favoritos",Toast.LENGTH_SHORT).show()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -19,18 +23,16 @@ class Search : AppCompatActivity() {
         }
         btnSearch.setOnClickListener {
             searchMovies()
-            //updateList()
         }
     }
+    var movies = ArrayList<Movie>()
+    lateinit var movieAdapter: MovieAdapter
 
     private fun updateList() {
-        movieAdapter = MovieAdapter(movies)
+        movieAdapter = MovieAdapter(movies, this)
         rvMovies.adapter = movieAdapter
         rvMovies.layoutManager = LinearLayoutManager(this)
     }
-
-    lateinit var movies : List<Movie>
-    lateinit var movieAdapter: MovieAdapter
 
     private fun searchMovies() {
         val tituloBuscar = tieTitle.text.toString()
@@ -48,13 +50,11 @@ class Search : AppCompatActivity() {
 
             override fun onResponse(call: Call<DataResponse>, response: Response<DataResponse>) {
                 if (response.isSuccessful){
-                    tvResults.text = "Se encontraron " + response.body()!!.total_results.toString() + " coincidencias"
-
+                    tvResults.text = "Se encontró " + response.body()!!.total_results.toString() + " coincidencia(s)"
                     movies = response.body()!!.results
-                    tvMovie.text = movies[0].id.toString()
+                    updateList()
                 }
             }
-
         })
     }
 }

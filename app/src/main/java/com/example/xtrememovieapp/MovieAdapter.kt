@@ -6,7 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.prototype_movie.view.*
 
-class MovieAdapter(val movies: List<Movie>): RecyclerView.Adapter<MoviePrototype>() {
+class MovieAdapter(val movies: List<Movie>, val itemClickListener: OnItemClickListener): RecyclerView.Adapter<MoviePrototype>() {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoviePrototype {
         val view = LayoutInflater
             .from(parent.context)
@@ -19,7 +20,7 @@ class MovieAdapter(val movies: List<Movie>): RecyclerView.Adapter<MoviePrototype
     }
 
     override fun onBindViewHolder(moviePrototype: MoviePrototype, position: Int) {
-        moviePrototype.bind(movies.get(position))
+        moviePrototype.bind(movies.get(position), itemClickListener)
     }
 
 }
@@ -29,8 +30,16 @@ class MoviePrototype(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val tvOverview = itemView.tvOverview
     val cvMovies = itemView.cvMovies
 
-    fun bind(movie: Movie){
+    fun bind(movie: Movie, itemClickListener: OnItemClickListener){
         tvTitle.text = movie.title
         tvOverview.text = movie.overview
+        cvMovies.setOnClickListener {
+            itemClickListener.OnItemClicked(movie)
+        }
     }
+
+}
+
+interface OnItemClickListener{
+    fun OnItemClicked(movie: Movie)
 }

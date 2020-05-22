@@ -13,5 +13,6 @@ class Favorite : AppCompatActivity() {
         btnReturn.setOnClickListener {
             finish()
         }
+        
     }
 }
